@@ -1,0 +1,81 @@
+<div class="span3" style="text-align: center;">
+  <div class="btn-group" data-toggle="buttons-radio">
+    <button type="button" class="btn btn-primary active" ng-click="overlayType = 'marker'">Marker</button>
+    <button type="button" class="btn btn-primary" ng-click="overlayType = 'circle'">Circle</button>
+    <button type="button" class="btn btn-primary" ng-click="overlayType = 'polygon'">Polygon</button>
+  </div>
+
+  <div style="margin-top:5px;" class="input-append" ng-show="overlayType == 'circle'">
+    <input class="span1" type="number" placeholder="Radius"
+           ng-model="radius"/>
+    <span class="add-on">km</span>
+  </div>
+
+  <div style="text-align: left;">
+
+    <div ng-show="overlayType == 'marker'">
+      <span class="row" ng-repeat="marker in markers">
+        <button class="btn btn-danger" ng-click="removeMarker($index)">&times;</button>
+        <button class="btn btn-info"   ng-click="setFromMarker($index)" ng-disabled="distanceFrom == (marker | markerToString)">F</button>
+        <button class="btn btn-info"   ng-click="setToMarker($index)"   ng-disabled="distanceTo == (marker | markerToString)">T</button>&nbsp;&nbsp;
+        {{marker | markerToString}}
+      </span>
+    </div>
+
+    <div ng-show="overlayType=='circle'">
+      <span class="row"  ng-repeat="circle in circles">
+        <button class="btn btn-danger" ng-click="removeCircle($index)">&times;</button>
+        <button class="btn btn-info"   ng-click="setFromCircle($index)" ng-disabled="distanceFrom == (circle | circleToString)">F</button>
+        <button class="btn btn-info"   ng-click="setToCircle($index)"   ng-disabled="distanceTo == (circle | circleToString)">T</button>&nbsp;&nbsp;
+        {{circle | circleToString}} ({{circle.radius}}km)
+      </span>
+    </div>
+
+    <div ng-show="overlayType=='polygon'">
+      <span class="row" ng-repeat="marker in polygonMarkers">
+        <button class="btn btn-danger" ng-click="removeFromPolygon($index)">&times;</button>
+        <button class="btn btn-info"   ng-click="setFromPolygon($index)" ng-disabled="distanceFrom == (marker | markerToString)">F</button>
+        <button class="btn btn-info"    ng-click="setToPolygon($index)"   ng-disabled="distanceTo == (marker | markerToString)">T</button>&nbsp;&nbsp;
+        {{marker | markerToString}}
+      </span>
+    </div>
+
+    <div style="margin-top: 20px;text-align: center;" ng-show="overlayType == 'marker'">
+      <div class="input-append">
+        <input class="span2" ng-model="customMarker" placeholder="Latitude,Longitude" type="text">
+        <button class="btn" type="button" ng-click="addCustomMarker()">Add</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="span10">
+  <div class="row">
+    <div id="map_canvas" style=" width: 100%;height: 500px;"></div>
+  </div>
+  <hr/>
+  <div class="row">
+    <div class="form-horizontal" style="margin-top: 10px;">
+      <div class="control-group">
+        <label class="control-label">Distance</label>
+        <div class="controls">
+          <input type="text" ng-model="distanceFrom" placeholder="From">
+          <input type="text" ng-model="distanceTo" placeholder="To">
+          <div class="input-append">
+            <input class="span1" type="text" ng-model="distanceResult"/>
+            <span class="add-on">km</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr/>
+  <div class="row" ng-show="overlayType == 'polygon'">
+    <div style="text-align: center;margin-bottom: 10px;">
+      <button class="btn" type="button" ng-click="showExport=(showExport != true)">Export</button>
+    </div>
+    <div ng-show="showExport == true" >
+      <textarea  class="span10" style="height: 500px; width:100%" readonly="readonly">{{polygonMarkers | markerArrayToString | json}}</textarea>
+    </div>
+  </div>
+</div>
